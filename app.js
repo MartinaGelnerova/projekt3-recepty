@@ -20,17 +20,6 @@ vyhledavaniTlacitko.addEventListener('click', (event) => {
 })
 
 
-/*
-let vyhledavani = document.getElementById('hledat');
-vyhledavani.addEventListener('keyup', (event) => {
-  retezec = event.target.value
-  console.log(retezec);
-  vyhledavac(retezec)
-})
-*/
-
-
-
 //3) Doplň filtrovanání receptů podle kategorie.
 let kategorie = document.getElementById('kategorie');
 kategorie.addEventListener('change', katFiltrace);
@@ -43,12 +32,38 @@ let razeni = document.getElementById('razeni');
 razeni.addEventListener('change', razeniHodnoceni);
 
 
+
+//5) Na recepty v seznamu by mělo jít kliknout a na pravé polovině, se objeví detail receptu.
+//Doplň patričné údaje receptu do HTML prvků s ID recept-foto, recept-kategorie,
+//recept-hodnoceni, recept-nazev, recept-popis.
+let variantyTitle = document.querySelectorAll('h3');
+variantyTitle.forEach((varianta) => {
+  varianta.addEventListener('click', (udalost) => {
+    let zvolenyRecept = udalost.target.dataset.title;
+    console.log(zvolenyRecept);
+    zvolenyReceptDetail = seznam[zvolenyRecept];
+
+    detailReceptu(zvolenyReceptDetail)
+  })
+})
+
+function detailReceptu(zvolenyReceptDetail) {
+  let receptImg = document.createElement('img');
+  receptImg.id = "recept-foto";
+  receptImg.alt = "Obrazek";
+  receptImg.src = zvolenyReceptDetail.img;
+  if (document.getElementById('recept-foto') != null) {
+    document.getElementById('recept-foto').remove();
+  }
+  document.querySelector(`.recept-detail-obrazek`).appendChild(receptImg);
+  document.getElementById('recept-kategorie').innerText = zvolenyReceptDetail.kategorie;
+  document.getElementById('recept-hodnoceni').innerText = zvolenyReceptDetail.hodnoceni;
+  document.getElementById('recept-nazev').innerText = zvolenyReceptDetail.nadpis;
+  document.getElementById('recept-popis').innerText = zvolenyReceptDetail.popis;
+}
+
 /*
 
-
-5) Na recepty v seznamu by mělo jít kliknout a na pravé polovině, se objeví detail receptu.
-Doplň patričné údaje receptu do HTML prvků s ID recept-foto, recept-kategorie,
-recept-hodnoceni, recept-nazev, recept-popis.
 
 6) Poslední vybraný recept ulož do Local Storage, aby se při novém otevření aplikace načetl.
 */
@@ -78,23 +93,25 @@ function seznamReceptu() {
     element = seznam[i];
     let recept = document.createElement('div');
     recept.className = 'recept';
-    recept.setAttribute("recept-cislo", i);
+    recept.setAttribute("data-recept", i);
     document.getElementById('recepty').appendChild(recept);
     let receptObrazek = document.createElement('div');
     receptObrazek.className = 'recept-obrazek';
-    receptObrazek.setAttribute("obrazek-cislo", i);
-    document.querySelector(`[recept-cislo="${i}"]`).appendChild(receptObrazek);
+    receptObrazek.setAttribute("data-obrazek", i);
+    document.querySelector(`[data-recept="${i}"]`).appendChild(receptObrazek);
     let receptImg = document.createElement('img');
     receptImg.alt = "Obrazek";
     receptImg.src = element.img;
-    document.querySelector(`[obrazek-cislo="${i}"]`).appendChild(receptImg);
+    receptImg.setAttribute("data-img", i);
+    document.querySelector(`[data-obrazek="${i}"]`).appendChild(receptImg);
     let receptInfo = document.createElement('div');
     receptInfo.className = 'recept-info';
-    receptInfo.setAttribute("recept-info", i);
-    document.querySelector(`[recept-cislo="${i}"]`).appendChild(receptInfo);
+    receptInfo.setAttribute("data-info", i);
+    document.querySelector(`[data-recept="${i}"]`).appendChild(receptInfo);
     let receptTitle = document.createElement('h3');
+    receptTitle.setAttribute("data-title", i);
     receptTitle.innerText = element.nadpis;
-    document.querySelector(`[recept-info="${i}"]`).appendChild(receptTitle)
+    document.querySelector(`[data-info="${i}"]`).appendChild(receptTitle)
   }
 }
 
