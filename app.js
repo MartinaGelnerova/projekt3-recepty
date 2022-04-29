@@ -14,12 +14,15 @@ let kategorie = document.getElementById('kategorie');
 kategorie.addEventListener('change', katFiltrace);
 
 
-
+//4) Doplň řazení receptů podle hodnocení.
+//let seznamFiltrRazeni = seznam.sort(razeniHodnoceni)
+//console.log(seznamFiltrRazeni);
+let razeni = document.getElementById('razeni');
+razeni.addEventListener('change', razeniHodnoceni);
 
 
 /*
 
-4) Doplň řazení receptů podle hodnocení.
 
 5) Na recepty v seznamu by mělo jít kliknout a na pravé polovině, se objeví detail receptu.
 Doplň patričné údaje receptu do HTML prvků s ID recept-foto, recept-kategorie,
@@ -32,13 +35,24 @@ recept-hodnoceni, recept-nazev, recept-popis.
 function seznamReceptu() {
   seznam = [];
   if (receptyFiltr.length == 0) {
-    for (i=0; i < recepty.length; i++) {
+    for (i = 0; i < recepty.length; i++) {
       seznam.push(recepty[i])
     }
   } else {
-    for (i=0; i < receptyFiltr.length; i++) {
+    for (i = 0; i < receptyFiltr.length; i++) {
       seznam.push(recepty[receptyFiltr[i]])
     }
+  }
+  hodnoceniOrderValue();
+  razeniValue = hodnoceniOrderValue();
+  if (razeniValue == 1) {
+    seznam.sort(function orderAsc (a, b) {
+      return b.hodnoceni - a.hodnoceni;
+    } )
+  }  else if (razeniValue == 2) {
+    seznam.sort(function orderDesc (a, b) {
+      return a.hodnoceni - b.hodnoceni;
+    })
   }
   document.querySelector('.kontejner').removeChild(document.getElementById('recepty'));
   let receptyDiv = document.createElement('div');
@@ -92,9 +106,30 @@ function katFiltrace() {
 
 function seznamFiltrovany() {
   seznam = [];
-  for (let i=0; i<receptyFiltr.length; i=i+1) {
+  for (let i = 0; i < receptyFiltr.length; i = i + 1) {
     seznam.push(recepty[receptyFiltr[i]]);
-    console.log(seznam);
-    seznamReceptu()
   }
+  console.log(seznam);
+  seznamReceptu()
+}
+
+function hodnoceniOrderValue() {
+  let razeni = document.getElementById('razeni');
+  let orderValue = razeni.value;
+  return (orderValue);
+}
+
+function razeniHodnoceni() {
+  razeniValue = hodnoceniOrderValue();
+  console.log(razeniValue);
+  if (razeniValue == 1) {
+    seznam.sort(function orderAsc (a, b) {
+      return b.hodnoceni - a.hodnoceni;
+    } )
+  }  else if (razeniValue == 2) {
+    seznam.sort(function orderDesc (a, b) {
+      return a.hodnoceni - b.hodnoceni;
+    })
+  }
+  seznamReceptu()
 }
