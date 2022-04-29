@@ -3,7 +3,7 @@ let receptyFiltrKat = [];
 let receptyFiltrText = [];
 let receptyFiltrHlavni = [];
 let seznam = [];
-let arrayA, arrayB;
+let arrayA, arrayB, zvolenyRecept;
 
 //1) Do prvku s id="recepty" vygeneruj z dat seznam všech receptů z naší "databáze".
 seznamReceptu();
@@ -39,13 +39,24 @@ razeni.addEventListener('change', razeniHodnoceni);
 let variantyTitle = document.querySelectorAll('h3');
 variantyTitle.forEach((varianta) => {
   varianta.addEventListener('click', (udalost) => {
-    let zvolenyRecept = udalost.target.dataset.title;
+    zvolenyRecept = udalost.target.dataset.title;
     console.log(zvolenyRecept);
     zvolenyReceptDetail = seznam[zvolenyRecept];
-
     detailReceptu(zvolenyReceptDetail)
   })
 })
+
+function clickForDetail() {
+  let variantyTitle = document.querySelectorAll('h3');
+  variantyTitle.forEach((varianta) => {
+    varianta.addEventListener('click', (udalost) => {
+      zvolenyRecept = udalost.target.dataset.title;
+      console.log(zvolenyRecept);
+      zvolenyReceptDetail = seznam[zvolenyRecept];
+      detailReceptu(zvolenyReceptDetail)
+    })
+  })
+}
 
 function detailReceptu(zvolenyReceptDetail) {
   let receptImg = document.createElement('img');
@@ -113,6 +124,7 @@ function seznamReceptu() {
     receptTitle.innerText = element.nadpis;
     document.querySelector(`[data-info="${i}"]`).appendChild(receptTitle)
   }
+  clickForDetail()
 }
 
 
@@ -181,6 +193,7 @@ function seznamFiltrovany() {
   filtrHlavni();
   console.log(seznam);
   seznamReceptu()
+  detailReceptu(zvolenyReceptDetail)
 }
 
 function hodnoceniOrderValue() {
@@ -202,6 +215,7 @@ function razeniHodnoceni() {
     })
   }
   seznamReceptu()
+  detailReceptu(zvolenyReceptDetail)
 }
 
 
