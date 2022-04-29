@@ -54,6 +54,8 @@ function clickForDetail() {
       console.log(zvolenyRecept);
       zvolenyReceptDetail = seznam[zvolenyRecept];
       detailReceptu(zvolenyReceptDetail)
+      document.querySelector(".recept-detail-info").style.visibility = "visible";
+      document.querySelector(".recept-detail-obrazek").style.visibility = "visible";
     })
   })
 }
@@ -81,6 +83,8 @@ function detailReceptu(zvolenyReceptDetail) {
 
 // FUNKCE
 function seznamReceptu() {
+  document.querySelector(".recept-detail-info").style.visibility = "hidden";
+  document.querySelector(".recept-detail-obrazek").style.visibility = "hidden";
   hodnoceniOrderValue();
   razeniValue = hodnoceniOrderValue();
   if (razeniValue == 1) {
