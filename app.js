@@ -1,12 +1,34 @@
 let element = null;
-let receptyFiltr = [];
+let receptyFiltrKat = [];
+let receptyFiltrText = [];
+let receptyFiltrHlavni = [];
 let seznam = [];
+let arrayA, arrayB;
 
 //1) Do prvku s id="recepty" vygeneruj z dat seznam všech receptů z naší "databáze".
 seznamReceptu();
 
 //2) Doplň hledání - v hlavičce odkomentuj pole pro hledání. Pri kliknutí na tlačítko Hledat
 //by se měl seznam receptů vyfiltrovat podle hledaného slova.
+let vyhledavaniTlacitko = document.querySelector('button');
+retezec = '';
+vyhledavaniTlacitko.addEventListener('click', (event) => {
+  let vyhledavani = document.getElementById('hledat');
+  retezec = vyhledavani.value;
+  console.log(retezec);
+  vyhledavac(retezec)
+})
+
+
+/*
+let vyhledavani = document.getElementById('hledat');
+vyhledavani.addEventListener('keyup', (event) => {
+  retezec = event.target.value
+  console.log(retezec);
+  vyhledavac(retezec)
+})
+*/
+
 
 
 //3) Doplň filtrovanání receptů podle kategorie.
@@ -33,24 +55,14 @@ recept-hodnoceni, recept-nazev, recept-popis.
 
 // FUNKCE
 function seznamReceptu() {
-  seznam = [];
-  if (receptyFiltr.length == 0) {
-    for (i = 0; i < recepty.length; i++) {
-      seznam.push(recepty[i])
-    }
-  } else {
-    for (i = 0; i < receptyFiltr.length; i++) {
-      seznam.push(recepty[receptyFiltr[i]])
-    }
-  }
   hodnoceniOrderValue();
   razeniValue = hodnoceniOrderValue();
   if (razeniValue == 1) {
-    seznam.sort(function orderAsc (a, b) {
+    seznam.sort(function orderAsc(a, b) {
       return b.hodnoceni - a.hodnoceni;
-    } )
-  }  else if (razeniValue == 2) {
-    seznam.sort(function orderDesc (a, b) {
+    })
+  } else if (razeniValue == 2) {
+    seznam.sort(function orderDesc(a, b) {
       return a.hodnoceni - b.hodnoceni;
     })
   }
@@ -59,6 +71,9 @@ function seznamReceptu() {
   receptyDiv.id = 'recepty';
   receptyDiv.className = 'recepty';
   document.querySelector('.kontejner').appendChild(receptyDiv);
+  if (seznam.length === 0) {
+    seznam = recepty
+  }
   for (i = 0; i < seznam.length; i++) {
     element = seznam[i];
     let recept = document.createElement('div');
@@ -83,6 +98,7 @@ function seznamReceptu() {
   }
 }
 
+
 function kategorieValue() {
   kategorie = document.getElementById('kategorie');
   let katValue = kategorie.value;
@@ -92,23 +108,60 @@ function kategorieValue() {
 function katFiltrace() {
   katValue = kategorieValue();
   console.log(katValue);
-  receptyFiltr = [];
+  receptyFiltrKat = [];
   for (n = 0; n <= recepty.length - 1; n++) {
     if (katValue == '') {
-      receptyFiltr.push(n);
+      receptyFiltrKat.push(n);
     } else if (recepty[n].kategorie === katValue) {
-      receptyFiltr.push(n);
+      receptyFiltrKat.push(n);
     }
   }
-  console.log(receptyFiltr);
-  seznamFiltrovany()
+  console.log(receptyFiltrKat);
+  seznamFiltrovany(filtrHlavni())
+}
+
+function filtrHlavni() {
+  if (receptyFiltrKat.length === 0) {
+    for (i = 0; i < recepty.length; i++) {
+      receptyFiltrKat.push(i)
+    }
+  }
+  if (receptyFiltrText.length === 0) {
+    for (i = 0; i < recepty.length; i++) {
+      receptyFiltrText.push(i)
+    }
+  }
+  if (receptyFiltrKat.length >= receptyFiltrText.length) {
+    arrayA = receptyFiltrKat;
+    arrayB = receptyFiltrText;
+  } else {
+    arrayB = receptyFiltrKat;
+    arrayA = receptyFiltrText;
+  }
+
+  receptyFiltrHlavni = performIntersection(arrayA, arrayB);
+
+  for (let i = 0; i < receptyFiltrHlavni.length; i = i + 1) {
+    seznam.push(recepty[receptyFiltrHlavni[i]]);
+  }
+  return (seznam)
+}
+
+function performIntersection(arr1, arr2) {
+  const setA = new Set(arr1);
+  const setB = new Set(arr2);
+  let intersectionResult = [];
+  for (let i of setB) {
+    if (setA.has(i)) {
+      intersectionResult.push(i);
+    }
+  }
+  return intersectionResult;
 }
 
 function seznamFiltrovany() {
   seznam = [];
-  for (let i = 0; i < receptyFiltr.length; i = i + 1) {
-    seznam.push(recepty[receptyFiltr[i]]);
-  }
+  filtrHlavni();
   console.log(seznam);
   seznamReceptu()
 }
@@ -123,13 +176,37 @@ function razeniHodnoceni() {
   razeniValue = hodnoceniOrderValue();
   console.log(razeniValue);
   if (razeniValue == 1) {
-    seznam.sort(function orderAsc (a, b) {
+    seznam.sort(function orderAsc(a, b) {
       return b.hodnoceni - a.hodnoceni;
-    } )
-  }  else if (razeniValue == 2) {
-    seznam.sort(function orderDesc (a, b) {
+    })
+  } else if (razeniValue == 2) {
+    seznam.sort(function orderDesc(a, b) {
       return a.hodnoceni - b.hodnoceni;
     })
   }
   seznamReceptu()
+}
+
+
+function vyhledavac(retezec) {
+  receptyFiltrText = [];
+  for (i = 0; i < recepty.length; i++) {
+    element = recepty[i];
+    if (retezec === '') {
+      receptyFiltrText.push(i)
+    } else {
+      nadpisLower = element.nadpis.toLowerCase();
+      retezecLower = retezec.toLowerCase();
+      if (nadpisLower.includes(retezecLower) === false) {
+        console.log(`${nadpisLower} nevyhovuje`)
+      } else {
+        nadpisLower = element.nadpis.toLowerCase();
+        retezecLower = retezec.toLowerCase();
+        console.log(`${nadpisLower} VYHOVUJE`);
+        receptyFiltrText.push(i)
+      }
+    }
+  }
+  console.log(receptyFiltrText)
+  seznamFiltrovany(filtrHlavni())
 }
