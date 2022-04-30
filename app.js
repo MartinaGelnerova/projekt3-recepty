@@ -3,10 +3,13 @@ let receptyFiltrKat = [];
 let receptyFiltrText = [];
 let receptyFiltrHlavni = [];
 let seznam = [];
-let arrayA, arrayB, zvolenyRecept;
+let arrayA, arrayB, zvolenyRecept, zvolenyReceptDetail;
+
+document.querySelector(".recept-detail-info").style.visibility = "hidden";
+  document.querySelector(".recept-detail-obrazek").style.visibility = "hidden";
 
 //1) Do prvku s id="recepty" vygeneruj z dat seznam všech receptů z naší "databáze".
-seznamReceptu();
+seznamReceptu()
 
 //2) Doplň hledání - v hlavičce odkomentuj pole pro hledání. Pri kliknutí na tlačítko Hledat
 //by se měl seznam receptů vyfiltrovat podle hledaného slova.
@@ -46,45 +49,19 @@ variantyTitle.forEach((varianta) => {
   })
 })
 
-function clickForDetail() {
-  let variantyTitle = document.querySelectorAll('h3');
-  variantyTitle.forEach((varianta) => {
-    varianta.addEventListener('click', (udalost) => {
-      zvolenyRecept = udalost.target.dataset.title;
-      console.log(zvolenyRecept);
-      zvolenyReceptDetail = seznam[zvolenyRecept];
-      detailReceptu(zvolenyReceptDetail)
-      document.querySelector(".recept-detail-info").style.visibility = "visible";
-      document.querySelector(".recept-detail-obrazek").style.visibility = "visible";
-    })
-  })
+
+//6) Poslední vybraný recept ulož do Local Storage, aby se při novém otevření aplikace načetl.
+
+if (localStorage.length != 0) {
+  zvolenyReceptDetail = JSON.parse(localStorage.posledniDetail);
+  detailReceptu(zvolenyReceptDetail)
+  document.querySelector(".recept-detail-info").style.visibility = "visible";
+  document.querySelector(".recept-detail-obrazek").style.visibility = "visible";
 }
 
-function detailReceptu(zvolenyReceptDetail) {
-  let receptImg = document.createElement('img');
-  receptImg.id = "recept-foto";
-  receptImg.alt = "Obrazek";
-  receptImg.src = zvolenyReceptDetail.img;
-  if (document.getElementById('recept-foto') != null) {
-    document.getElementById('recept-foto').remove();
-  }
-  document.querySelector(`.recept-detail-obrazek`).appendChild(receptImg);
-  document.getElementById('recept-kategorie').innerText = zvolenyReceptDetail.kategorie;
-  document.getElementById('recept-hodnoceni').innerText = zvolenyReceptDetail.hodnoceni;
-  document.getElementById('recept-nazev').innerText = zvolenyReceptDetail.nadpis;
-  document.getElementById('recept-popis').innerText = zvolenyReceptDetail.popis;
-}
 
-/*
-
-
-6) Poslední vybraný recept ulož do Local Storage, aby se při novém otevření aplikace načetl.
-*/
-
-// FUNKCE
+// VŠECHNY FUNKCE
 function seznamReceptu() {
-  document.querySelector(".recept-detail-info").style.visibility = "hidden";
-  document.querySelector(".recept-detail-obrazek").style.visibility = "hidden";
   hodnoceniOrderValue();
   razeniValue = hodnoceniOrderValue();
   if (razeniValue == 1) {
@@ -198,6 +175,7 @@ function seznamFiltrovany() {
   console.log(seznam);
   seznamReceptu()
   detailReceptu(zvolenyReceptDetail)
+
 }
 
 function hodnoceniOrderValue() {
@@ -244,4 +222,34 @@ function vyhledavac(retezec) {
   }
   console.log(receptyFiltrText)
   seznamFiltrovany(filtrHlavni())
+}
+
+function clickForDetail() {
+  let variantyTitle = document.querySelectorAll('h3');
+  variantyTitle.forEach((varianta) => {
+    varianta.addEventListener('click', (udalost) => {
+      zvolenyRecept = udalost.target.dataset.title;
+      console.log(zvolenyRecept);
+      zvolenyReceptDetail = seznam[zvolenyRecept];
+      localStorage.posledniDetail = JSON.stringify(zvolenyReceptDetail);
+      detailReceptu(zvolenyReceptDetail)
+      document.querySelector(".recept-detail-info").style.visibility = "visible";
+      document.querySelector(".recept-detail-obrazek").style.visibility = "visible";
+    })
+  })
+}
+
+function detailReceptu(zvolenyReceptDetail) {
+  let receptImg = document.createElement('img');
+  receptImg.id = "recept-foto";
+  receptImg.alt = "Obrazek";
+  receptImg.src = zvolenyReceptDetail.img;
+  if (document.getElementById('recept-foto') != null) {
+    document.getElementById('recept-foto').remove();
+  }
+  document.querySelector(`.recept-detail-obrazek`).appendChild(receptImg);
+  document.getElementById('recept-kategorie').innerText = zvolenyReceptDetail.kategorie;
+  document.getElementById('recept-hodnoceni').innerText = zvolenyReceptDetail.hodnoceni;
+  document.getElementById('recept-nazev').innerText = zvolenyReceptDetail.nadpis;
+  document.getElementById('recept-popis').innerText = zvolenyReceptDetail.popis;
 }
